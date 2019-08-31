@@ -2,15 +2,23 @@
   "name": "init-ts-npm",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "license": "MIT",
+  "author": "vv13 <zwhvv13@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vv13/vue-authplugin"
+  },
   "scripts": {
     "start": "tsc -w",
     "build": "tsc",
     "test": "jest"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.5.5",
     "@babel/preset-env": "^7.5.5",

@@ -8,31 +8,46 @@ interface IEventHandlerMap {
 
 export default class EventCycle {
   private cycles: IEventHandlerMap;
+  private onceMap: { [key: string]: EventHandler };
 
-  constructor(all?: IEventHandlerMap) {
-    this.cycles = all || Object.create(null);
+  constructor(cycles?: IEventHandlerMap) {
+    this.cycles = cycles || Object.create(null);
+    this.onceMap = {};
   }
 
   public on(type: string, handler: EventHandler) {
     (this.cycles[type] || (this.cycles[type] = [])).push(handler);
   }
 
-  public off(type: string, handler: EventHandler) {
-    if (!this.cycles[type]) return;
+  public once(type: string, handler: EventHandler) {
+    this.onceMap[type] = handler;
+    (this.cycles[type] || (this.cycles[type] = [])).push(handler);
+  }
+
+  public off(type: string, handler?: EventHandler) {
+    const handlers = this.cycles[type] || [];
+    if (!handlers.length) return;
     if (!handler) {
       this.cycles[type] = [];
       return;
     }
-    this.cycles[type] = (this.cycles[type] || []).filter(
+    this.cycles[type] = handlers.filter(
       (child: EventHandler) => child !== handler
     );
   }
 
   public emit(type: string, evt?: any) {
-    const handlers = this.cycles[type] || [];
-    handlers.slice().map(handler => {
-      handler(evt);
-    });
+    this.cycles[type] = (this.cycles[type] || [])
+      .slice()
+      .map(handler => {
+        handler(evt);
+        return this.onceMap[type] === handler ? undefined : handler;
+      })
+      .filter((item: EventHandler | undefined) => {
+        if (item !== undefined) return item;
+        delete this.onceMap[type];
+        this.off(type);
+      }) as EventHandler[];
     (this.cycles['*'] || []).slice().map(handler => {
       handler(type, evt);
     });

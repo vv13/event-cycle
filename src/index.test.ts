@@ -8,14 +8,14 @@ describe('EventCycle#', () => {
   });
 
   describe('off()', () => {
-    it('should move cb with specific function', () => {
+    test('should move cb with specific function', () => {
       const fn = jest.fn();
       eventCycle.on('test', fn);
       eventCycle.off('test', fn);
       eventCycle.emit('test');
       expect(fn).not.toBeCalled();
     });
-    it('should move all type listener with no cb', () => {
+    test('should move all type listener with no cb', () => {
       const cb1 = jest.fn();
       const cb2 = jest.fn();
       eventCycle.on('test', cb1);
@@ -25,7 +25,7 @@ describe('EventCycle#', () => {
       expect(cb1).not.toBeCalled();
       expect(cb2).not.toBeCalled();
     });
-    it('should move type listener with cb', () => {
+    test('should move type listener with cb', () => {
       const cb1 = jest.fn();
       const cb2 = jest.fn();
       eventCycle.on('test', cb1);
@@ -35,7 +35,7 @@ describe('EventCycle#', () => {
       expect(cb1).not.toBeCalled();
       expect(cb2).toBeCalledTimes(1);
     });
-    it('should move wirdcard cb', () => {
+    test('should move wirdcard cb', () => {
       const cbwild = jest.fn();
       eventCycle.on('*', cbwild);
       eventCycle.off('*', cbwild);
@@ -44,7 +44,7 @@ describe('EventCycle#', () => {
     });
   });
   describe('on & emit', () => {
-    it('emit() should trigger specific type listener', () => {
+    test('emit() should trigger specific type listener', () => {
       const cb = jest.fn();
       eventCycle.on('test', cb);
       eventCycle.emit('test', 'testArgs');
@@ -60,7 +60,7 @@ describe('EventCycle#', () => {
       expect(cb1).toBeCalledTimes(1);
       expect(cb2).toBeCalledTimes(1);
     });
-    it('emit() should trigger wildcard listener', () => {
+    test('emit() should trigger wildcard listener', () => {
       const cb = jest.fn();
       const cbwild = jest.fn();
       eventCycle.on('test', cb);
@@ -68,6 +68,25 @@ describe('EventCycle#', () => {
       eventCycle.emit('test', 'testArgs');
       expect(cb).toBeCalledTimes(1);
       expect(cbwild).toBeCalledTimes(1);
+    });
+  });
+  describe('once()', () => {
+    test('once() should only called once', () => {
+      const cb = jest.fn();
+      eventCycle.once('test', cb);
+      eventCycle.emit('test', 'testArgs');
+      eventCycle.emit('test', 'testArgs');
+      expect(cb).toBeCalledTimes(1);
+    });
+    test('once() should only called once when one type has multi-one subscriber', () => {
+      const cbon = jest.fn();
+      const cbonce = jest.fn();
+      eventCycle.once('test', cbonce);
+      eventCycle.on('test', cbon);
+      eventCycle.emit('test');
+      eventCycle.emit('test');
+      expect(cbon).toBeCalledTimes(2);
+      expect(cbonce).toBeCalledTimes(1);
     });
   });
 });

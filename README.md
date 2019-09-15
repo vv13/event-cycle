@@ -1,65 +1,44 @@
-## What have I do
-### Initial project
+# EventCycle
+Simple and flexsible event trigger.
+
+## Install
 ```
-mkdir init-ts-npm && cd init-ts-npm
-git init
-npm init -y
+npm i event-cycle
 ```
 
-### Initial TypeScript
+## Usage
+Simply initialize by Singleton Pattern:
 ```
-npm i -D typescript
-npx tsc --init
+// eventCycle.ts
+import EventCycle from 'event-cycle';
+
+export default new EventCycle();
 ```
 
-### Initial tslint
+Then use it in any function:
 ```
-npm i -D tslint
-npx tslint --init
+import eventCycle from './eventCycle';
+
+// somewhere to subscribe event
+eventCycle.on('hello', (data: string) => console.log(`hello ${data || 'world'}`));
+
+// somewhere to  publish event
+eventCycle.emit('hello'); // print 'hello world'
+eventCycle.emit('hello', 'vv13'); // print 'hello vv13'
 ```
 
-### Initial Prettier
-Add `.prettierrc` to your root directory
-```
-{
-  "trailingComma": "es5",
-  "tabWidth": 2,
-  "semi": false,
-  "singleQuote": true
-}
-```
+## Api
+### on(type, handler)
+- arguments
+  - `type: string`, subscriber event name, allow duplicate
+  - `handler: (data?: any) => void`, event subscription callback, accept a data by `emit`
 
-Then add tslint plugin:
-```
-npm i -D tslint-config-prettier
-```
+### emit(type, data)
+- arguments
+  - `type: string`, publisher event name, it will be trigger subscription callback
+  - `data: any`, event data can be used by subscription callback
 
-extend your tslint.json, and make sure tslint-config-prettier is at the end:
-```
-{
-  "extends": [
-    // ...
-    "tslint-config-prettier"
-  ]
-}
-```
-
-### Initial Jest
-```
-npm i -D jest babel-jest @babel/core @babel/preset-env @babel/preset-typescript @types/jest
-```
-
-Then `npx jest --init`. Don't forget to add `@babel/preset-typescript` to the list of presets in your babel.config.js.
-```
-module.exports = {
-  presets: [
-    // ...
-    '@babel/preset-typescript',
-  ],
-};
-```
-
-
-
-
-
+### off(type, handler)
+- arguments
+  - `type: string`, event name who will be removed
+  - `handler?: (event?: any) => void;`, specific removing function, if it's not provided, `off` will default remove all subscriber in such type. 

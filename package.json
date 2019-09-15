@@ -1,7 +1,7 @@
 {
-  "name": "init-ts-npm",
-  "version": "1.0.0",
-  "description": "",
+  "name": "event-cycle",
+  "version": "0.1.0",
+  "description": "a publisher/subscriber event bus",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
@@ -11,14 +11,18 @@
   "author": "vv13 <zwhvv13@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/vv13/vue-authplugin"
+    "url": "https://github.com/vv13/event-cycle"
   },
   "scripts": {
     "start": "tsc -w",
     "build": "tsc",
     "test": "jest"
   },
-  "keywords": [],
+  "keywords": [
+    "event bus",
+    "event emitter",
+    "event-cycle"
+  ],
   "devDependencies": {
     "@babel/core": "^7.5.5",
     "@babel/preset-env": "^7.5.5",

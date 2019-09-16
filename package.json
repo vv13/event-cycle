@@ -1,6 +1,6 @@
 {
   "name": "event-cycle",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "a publisher/subscriber event bus",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

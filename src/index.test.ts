@@ -7,15 +7,37 @@ describe('EventCycle#', () => {
     eventCycle = new EventCycle();
   });
 
+  describe('offAll()', () => {
+    test('should remove specific onAll cb', () => {
+      const cb1 = jest.fn();
+      const cb2 = jest.fn();
+      eventCycle.onAll(cb1);
+      eventCycle.onAll(cb2);
+      eventCycle.offAll(cb1);
+      eventCycle.emit('something', 'testArgs');
+      expect(cb1).not.toBeCalled();
+      expect(cb2).toBeCalledTimes(1);
+    });
+    test('should remove all onAll cb', () => {
+      const cb1 = jest.fn();
+      const cb2 = jest.fn();
+      eventCycle.onAll(cb1);
+      eventCycle.onAll(cb2);
+      eventCycle.offAll();
+      eventCycle.emit('something', 'testArgs');
+      expect(cb1).not.toBeCalled();
+      expect(cb2).not.toBeCalled();
+    });
+  });
   describe('off()', () => {
-    test('should move cb with specific function', () => {
+    test('should remove cb with specific function', () => {
       const fn = jest.fn();
       eventCycle.on('test', fn);
       eventCycle.off('test', fn);
       eventCycle.emit('test');
       expect(fn).not.toBeCalled();
     });
-    test('should move all type listener with no cb', () => {
+    test('should remove all type listener with no cb', () => {
       const cb1 = jest.fn();
       const cb2 = jest.fn();
       eventCycle.on('test', cb1);
@@ -25,7 +47,7 @@ describe('EventCycle#', () => {
       expect(cb1).not.toBeCalled();
       expect(cb2).not.toBeCalled();
     });
-    test('should move type listener with cb', () => {
+    test('should remove type listener with cb', () => {
       const cb1 = jest.fn();
       const cb2 = jest.fn();
       eventCycle.on('test', cb1);
@@ -35,7 +57,7 @@ describe('EventCycle#', () => {
       expect(cb1).not.toBeCalled();
       expect(cb2).toBeCalledTimes(1);
     });
-    test('should move wirdcard cb', () => {
+    test('should remove wirdcard cb', () => {
       const cbwild = jest.fn();
       eventCycle.on('*', cbwild);
       eventCycle.off('*', cbwild);
@@ -43,7 +65,7 @@ describe('EventCycle#', () => {
       expect(cbwild).not.toBeCalled();
     });
   });
-  describe('on & emit', () => {
+  describe('on() & onAll() & emit()', () => {
     test('emit() should trigger specific type listener', () => {
       const cb = jest.fn();
       eventCycle.on('test', cb);
@@ -60,11 +82,11 @@ describe('EventCycle#', () => {
       expect(cb1).toBeCalledTimes(1);
       expect(cb2).toBeCalledTimes(1);
     });
-    test('emit() should trigger wildcard listener', () => {
+    test('emit() should trigger onAll listener', () => {
       const cb = jest.fn();
       const cbwild = jest.fn();
       eventCycle.on('test', cb);
-      eventCycle.on('*', cbwild);
+      eventCycle.onAll(cbwild);
       eventCycle.emit('test', 'testArgs');
       expect(cb).toBeCalledTimes(1);
       expect(cbwild).toBeCalledTimes(1);

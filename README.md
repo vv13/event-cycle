@@ -1,8 +1,7 @@
 # EventCycle
 Simple and flexsible event trigger, Written by TypeScript.
 
-- 💪 Test cover
-- ✨ Type support
+- 💪 All case in test cover
 
 ## Install
 ```
@@ -36,6 +35,10 @@ eventCycle.emit('hello', 'vv13'); // print 'hello vv13'
   - `type: string`, subscriber event name, allow duplicate
   - `handler: (data?: any) => void`, event subscription callback, accept a data by `emit`
 
+### onAll(handler)
+- arguments
+  - `handler: (type: string, data?: any) => void`, every event publisher will trigger this callback, it receive event type and data by `emit`
+
 ### once(type, handler)
 - arguments
   - `type: string`, subscriber event name, only trigger once, after that it will auto-cancel subscribe
@@ -50,3 +53,7 @@ eventCycle.emit('hello', 'vv13'); // print 'hello vv13'
 - arguments
   - `type: string`, event name who will be removed
   - `handler?: (event?: any) => void;`, specific removing function, if it's not provided, `off` will default remove all subscriber in such type. 
+
+### offAll(handler)
+- arguments
+  - `handler?: (event?: any) => void;`, remove the handler from global subscriber, if handler not provided, `offAll` will remove all subscriber. 

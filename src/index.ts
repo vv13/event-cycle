@@ -1,9 +1,10 @@
+const WildKey = Symbol('wildKey');
+
 type EventHandler = (data?: any) => void;
 type WildCardEventHandler = (type: string, data?: any) => void;
-
 interface IEventHandlerMap {
-  '*'?: WildCardEventHandler[];
-  [type: string]: EventHandler[] | undefined;
+  [WildKey]: WildCardEventHandler[];
+  [type: string]: EventHandler[];
 }
 
 export default class EventCycle {
@@ -17,6 +18,12 @@ export default class EventCycle {
 
   public on(type: string, handler: EventHandler) {
     (this.cycles[type] || (this.cycles[type] = [])).push(handler);
+  }
+
+  public onAll(handler: EventHandler) {
+    this.cycles[WildKey]
+      ? this.cycles[WildKey].push(handler)
+      : (this.cycles[WildKey] = [handler]);
   }
 
   public once(type: string, handler: EventHandler) {
@@ -36,6 +43,18 @@ export default class EventCycle {
     );
   }
 
+  public offAll(handler?: EventHandler) {
+    const handlers = this.cycles[WildKey] || [];
+    if (!handlers.length) return;
+    if (!handler) {
+      this.cycles[WildKey] = [];
+      return;
+    }
+    this.cycles[WildKey] = handlers.filter(
+      (child: EventHandler) => child !== handler
+    );
+  }
+
   public emit(type: string, evt?: any) {
     this.cycles[type] = (this.cycles[type] || [])
       .slice()
@@ -48,7 +67,7 @@ export default class EventCycle {
         this.onceMap.delete(type);
         this.off(type);
       }) as EventHandler[];
-    (this.cycles['*'] || []).slice().map(handler => {
+    (this.cycles[WildKey] || []).slice().map(handler => {
       handler(type, evt);
     });
   }

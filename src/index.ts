@@ -8,11 +8,11 @@ interface IEventHandlerMap {
 
 export default class EventCycle {
   private cycles: IEventHandlerMap;
-  private onceMap: { [key: string]: EventHandler };
+  private onceMap: Map<string, EventHandler>;
 
   constructor(cycles?: IEventHandlerMap) {
     this.cycles = cycles || Object.create(null);
-    this.onceMap = {};
+    this.onceMap = new Map();
   }
 
   public on(type: string, handler: EventHandler) {
@@ -20,7 +20,7 @@ export default class EventCycle {
   }
 
   public once(type: string, handler: EventHandler) {
-    this.onceMap[type] = handler;
+    this.onceMap.set(type, handler);
     (this.cycles[type] || (this.cycles[type] = [])).push(handler);
   }
 
@@ -41,11 +41,11 @@ export default class EventCycle {
       .slice()
       .map(handler => {
         handler(evt);
-        return this.onceMap[type] === handler ? undefined : handler;
+        return this.onceMap.get(type) === handler ? undefined : handler;
       })
       .filter((item: EventHandler | undefined) => {
         if (item !== undefined) return item;
-        delete this.onceMap[type];
+        this.onceMap.delete(type);
         this.off(type);
       }) as EventHandler[];
     (this.cycles['*'] || []).slice().map(handler => {

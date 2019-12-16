@@ -16,8 +16,13 @@ export default class EventCycle {
     this.onceMap = new Map();
   }
 
-  public on(type: string, handler: EventHandler) {
-    (this.cycles[type] || (this.cycles[type] = [])).push(handler);
+  public on(type: string, handler: EventHandler, isSolo: boolean = false) {
+    if (!this.cycles[type] || isSolo) {
+      this.cycles[type] = [handler];
+      return;
+    }
+    if (this.cycles[type].includes(handler)) return;
+    this.cycles[type].push(handler);
   }
 
   public onAll(handler: EventHandler) {

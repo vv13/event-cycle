@@ -7,6 +7,30 @@ describe('EventCycle#', () => {
     eventCycle = new EventCycle();
   });
 
+  describe('on()', () => {
+    test('should only trigger once when register more than once', () => {
+      const cb1 = jest.fn();
+      const cb2 = jest.fn();
+      eventCycle.on('test', cb1);
+      eventCycle.on('test', cb1);
+      eventCycle.on('test', cb1);
+      eventCycle.on('test', cb2);
+      eventCycle.emit('test');
+      expect(cb1).toBeCalledTimes(1);
+      expect(cb2).toBeCalledTimes(1);
+    })
+    test('should only trigger new callback when isSolo', () => {
+      const cb1 = jest.fn();
+      const cb2 = jest.fn();
+      eventCycle.on('test', cb1, true);
+      eventCycle.on('test', cb1, true);
+      eventCycle.on('test', cb2, true);
+      eventCycle.emit('test');
+      expect(cb1).toBeCalledTimes(0);
+      expect(cb2).toBeCalledTimes(1);
+    })
+  })
+
   describe('offAll()', () => {
     test('should remove specific onAll cb', () => {
       const cb1 = jest.fn();
